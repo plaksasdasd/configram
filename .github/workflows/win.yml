@@ -78,6 +78,34 @@ jobs:
           submodules: recursive
           path: ${{ env.TBUILD }}\${{ env.REPO_NAME }}
 
+      - name: Restore modules from .gitmodules.
+        shell: bash
+        run: |
+          cd "$TBUILD/$REPO_NAME"
+
+          git config -f .gitmodules --get-regexp '^submodule\..*\.path$' | while read -r key path; do
+            name="${key#submodule.}"
+            name="${name%.path}"
+            url="$(git config -f .gitmodules --get "submodule.${name}.url")"
+
+            if [ -z "$url" ]; then
+              echo "Skip $path: missing URL."
+              continue
+            fi
+
+            if [ -d "$path" ] && [ -z "$(ls -A "$path" 2>/dev/null)" ]; then
+              rmdir "$path"
+            fi
+
+            if [ -e "$path" ]; then
+              echo "Exists: $path"
+              continue
+            fi
+
+            mkdir -p "$(dirname "$path")"
+            git clone --depth=1 --recursive --shallow-submodules "$url" "$path"
+          done
+
       - name: First set up.
         shell: bash
         run: |
