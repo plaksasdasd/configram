@@ -50,7 +50,7 @@ jobs:
     strategy:
       matrix:
         arch: [x64]
-        generator: [""]
+        generator: ["Ninja Multi-Config"]
 
     env:
       UPLOAD_ARTIFACT: "true"
@@ -78,7 +78,20 @@ jobs:
           submodules: recursive
           path: ${{ env.TBUILD }}\${{ env.REPO_NAME }}
 
+      - name: Source modules cache.
+        id: cache-source-modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ env.TBUILD }}\${{ env.REPO_NAME }}\cmake
+            ${{ env.TBUILD }}\${{ env.REPO_NAME }}\Telegram\codegen
+            ${{ env.TBUILD }}\${{ env.REPO_NAME }}\Telegram\lib_*
+            ${{ env.TBUILD }}\${{ env.REPO_NAME }}\Telegram\ThirdParty\*
+          key: ${{ runner.OS }}-${{ matrix.arch }}-source-modules-${{ hashFiles('.gitmodules') }}
+          restore-keys: ${{ runner.OS }}-${{ matrix.arch }}-source-modules-
+
       - name: Restore modules from .gitmodules.
+        if: steps.cache-source-modules.outputs.cache-hit != 'true'
         shell: bash
         run: |
           cd "$TBUILD/$REPO_NAME"
@@ -103,7 +116,7 @@ jobs:
             fi
 
             mkdir -p "$(dirname "$path")"
-            git clone --depth=1 --recursive --shallow-submodules "$url" "$path"
+            git clone --depth=1 "$url" "$path"
           done
 
       - name: First set up.
@@ -224,7 +237,7 @@ jobs:
           -D DESKTOP_APP_DISABLE_CRASH_REPORTS=OFF ^
           %TDESKTOP_BUILD_DEFINE%
 
-          cmake --build ..\out --config Debug --parallel
+          cmake --build ..\out --config Debug --parallel --target Telegram Updater
 
       - name: Move artifact.
         if: (env.UPLOAD_ARTIFACT == 'true') || (github.ref == 'refs/heads/nightly')
