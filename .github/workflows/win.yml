@@ -49,8 +49,8 @@ jobs:
 
     strategy:
       matrix:
-        arch: [Win32, x64]
-        generator: ["", "Ninja Multi-Config"]
+        arch: [x64]
+        generator: [""]
 
     env:
       UPLOAD_ARTIFACT: "true"
@@ -150,6 +150,7 @@ jobs:
           restore-keys: ${{ runner.OS }}-${{ matrix.arch }}-libs-
 
       - name: Libraries.
+        if: steps.cache-third-party.outputs.cache-hit != 'true' || steps.cache-libs.outputs.cache-hit != 'true'
         env:
           GYP_MSVS_OVERRIDE_PATH: 'C:\Program Files\Microsoft Visual Studio\2022\Enterprise\'
           GYP_MSVS_VERSION: 2022
