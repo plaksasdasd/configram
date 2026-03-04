@@ -64,3 +64,42 @@ settings.local.json
 # Cursor IDE local settings (but keep .cursor/rules/)
 .cursor/*
 !.cursor/rules/
+
+# Native build artifacts
+*.o
+*.obj
+*.a
+*.la
+*.lo
+*.so
+*.so.*
+*.dylib
+*.dll
+*.lib
+*.exe
+*.exp
+*.idb
+*.ilk
+*.ipdb
+*.iobj
+*.pdb
+*.pch
+
+# CMake / Ninja generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+install_manifest.txt
+build.ninja
+.ninja_deps
+.ninja_log
+
+# Local archives / dumps
+*.7z
+*.zip
+*.rar
+*.tar
+*.tar.gz
+*.tgz
+*.xz
+*.dmp
