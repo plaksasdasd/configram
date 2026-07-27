@@ -1,0 +1,40 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "dashscope": {
+      "name": "DashScope (Alibaba)",
+      "npm": "@ai-sdk/openai-compatible",
+      "options": {
+        "baseURL": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+        "apiKey": "sk-a144d606f37245d486e7ed61cd53c2fe"
+      },
+      "models": {
+        "kimi/kimi-k3": {
+          "name": "Kimi K3",
+          "reasoning": true,
+          "tool_call": true,
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
+          "options": {
+            "reasoningEffort": "max"
+          },
+          "variants": {
+            "max": {
+              "reasoningEffort": "max"
+            },
+            "high": {
+              "reasoningEffort": "high"
+            },
+            "low": {
+              "reasoningEffort": "low"
+            }
+          }
+        }
+      }
+    }
+  },
+  "model": "dashscope/kimi/kimi-k3"
+}
